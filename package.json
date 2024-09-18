@@ -1,6 +1,17 @@
 {
   "name": "eslint-config-tunnckocore",
-  "version": "5.0.0",
+  "version": "5.0.1",
+  "license": "MIT",
+  "author": "Charlike Mike Reagent <opensource@tunnckocore.com>",
+  "homepage": "https://github.com/tunnckoCore/eslint-config-tunnckocore",
+  "funding": [
+    "https://ko-fi.com/tunnckoCore/commissions",
+    "https://github.com/sponsors/tunnckoCore"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tunnckoCore/eslint-config-tunnckocore.git"
+  },
   "type": "commonjs",
   "files": [
     "tsconfig.json",
