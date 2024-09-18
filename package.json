@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-tunnckocore",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "license": "MIT",
   "author": "Charlike Mike Reagent <opensource@tunnckocore.com>",
   "homepage": "https://github.com/tunnckoCore/eslint-config-tunnckocore",
@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://github.com/tunnckoCore/eslint-config-tunnckocore.git"
   },
+  "main": "./index.cjs",
   "type": "commonjs",
   "files": [
     "tsconfig.json",
@@ -42,6 +43,6 @@
     "prettier-eslint": "16.3.0",
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-pkgjson": "0.3.0",
-    "prettier-plugin-tailwindcss": "0.6.6",
+    "prettier-plugin-tailwindcss": "0.6.6"
   }
 }
