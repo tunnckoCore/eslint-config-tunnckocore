@@ -83,7 +83,7 @@ const config = {
   ],
 };
 
-const cfg = {
+const withSolidity = {
   ...config,
   overrides: [
     ...config.overrides,
@@ -101,4 +101,4 @@ const cfg = {
   ],
 };
 
-module.exports = cfg;
+module.exports = withSolidity;

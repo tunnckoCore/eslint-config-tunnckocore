@@ -9,7 +9,7 @@ const path = require('node:path');
 const process = require('node:process');
 const airbnbBase = require('eslint-config-airbnb-base');
 const eslintConfigPrettier = require('eslint-config-prettier');
-const prettierConfig = require('./.prettierrc.cjs');
+const prettierConfig = require('./prettier.cjs');
 
 // eslint-disable-next-line import/no-dynamic-require
 const bestPractices = require(airbnbBase.extends[0]);
