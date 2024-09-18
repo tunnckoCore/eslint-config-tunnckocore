@@ -1,83 +1,94 @@
 /** @typedef  {import("prettier").Config} PrettierConfig */
 
+const sortImportsPlugin = {
+  plugins: ["@ianvs/prettier-plugin-sort-imports"],
+  importOrder: [
+    "<BUILTIN_MODULES>",
+    "^(react/(.*)$)|^(react$)",
+    "^(next/(.*)$)|^(next$)",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^~/(.*)$",
+    "^@/(.*)$",
+    "^~(.*)$",
+    "^[./]",
+  ],
+};
+
 /** @type { PrettierConfig | SortImportsConfig } */
 const config = {
-  endOfLine: 'lf',
+  endOfLine: "lf",
   printWidth: 100,
   tabWidth: 2,
   useTabs: false,
   semi: true,
-  proseWrap: 'always',
-  arrowParens: 'always',
+  proseWrap: "always",
+  arrowParens: "always",
   singleQuote: true,
-  trailingComma: 'all',
+  trailingComma: "all",
   bracketSpacing: true,
   bracketSameLine: false,
-  plugins: ['@ianvs/prettier-plugin-sort-imports', 'prettier-plugin-tailwindcss'],
+  plugins: ["prettier-plugin-tailwindcss"],
   // Last version that doesn't squash type and value imports
-  importOrderTypeScriptVersion: '5.4.3',
-  importOrder: [
-    '<BUILTIN_MODULES>',
-    '^(react/(.*)$)|^(react$)',
-    '^(next/(.*)$)|^(next$)',
-    '<THIRD_PARTY_MODULES>',
-    '',
-    '^~/(.*)$',
-    '^@/(.*)$',
-    '^~(.*)$',
-    '^[./]',
-  ],
+
   overrides: [
     {
-      files: ['**/.all-contributorsrc'],
+      files: ["**/.all-contributorsrc"],
       options: {
-        parser: 'json',
+        parser: "json",
       },
     },
     {
-      files: ['**/*.json'],
+      files: ["**/*.json"],
       options: {
-        parser: 'json-stringify',
+        parser: "json-stringify",
       },
     },
     {
-      files: ['**/*.{ts,tsx}'],
+      files: ["**/*.{mjs,js,jsx}"],
       options: {
-        parser: 'typescript',
+        ...sortImportsPlugin,
       },
     },
     {
-      files: ['**/tsconfig*.json'],
+      files: ["**/*.{ts,tsx}"],
       options: {
-        parser: 'jsonc',
+        ...sortImportsPlugin,
+        parser: "typescript",
       },
     },
     {
-      files: ['**/package.json'],
+      files: ["**/tsconfig*.json"],
       options: {
-        parser: 'json-stringify',
-        plugins: ['prettier-plugin-pkgjson'],
+        parser: "jsonc",
       },
     },
     {
-      files: ['**/*.md'],
+      files: ["**/package.json"],
       options: {
-        parser: 'markdown',
-        proseWrap: 'always',
+        parser: "json-stringify",
+        plugins: ["prettier-plugin-pkgjson"],
       },
     },
     {
-      files: ['**/*.mdx'],
+      files: ["**/*.md"],
       options: {
-        parser: 'mdx',
-        proseWrap: 'always',
+        parser: "markdown",
+        proseWrap: "always",
       },
     },
     {
-      files: ['**/*.astro'],
+      files: ["**/*.mdx"],
       options: {
-        parser: 'astro',
-        plugins: ['prettier-plugin-astro'],
+        parser: "mdx",
+        proseWrap: "always",
+      },
+    },
+    {
+      files: ["**/*.astro"],
+      options: {
+        parser: "astro",
+        plugins: ["prettier-plugin-astro"],
       },
     },
   ],
@@ -88,9 +99,9 @@ const withSolidity = {
   overrides: [
     ...config.overrides,
     {
-      files: '**/*.sol',
+      files: "**/*.sol",
       options: {
-        parser: 'solidity-parse',
+        parser: "solidity-parse",
         printWidth: 100,
         tabWidth: 4,
         useTabs: false,
