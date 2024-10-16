@@ -484,6 +484,17 @@ function loadConfigFromWorkspace(ws) {
           'max-statements': ['warn', 40, { ignoreTopLevelFunctions: true }],
         },
       },
+      {
+        files: ['.eslintrc.cjs', 'eslint.config.cjs', '.prettierrc.cjs', '**/*.cjs', '*.*.cjs'],
+        // !NOTE: should not be needed, cuz typescript should not be enabled on non-ts files
+        // rules: { '@typescript-eslint/no-var-requires': 'off' },
+      },
+      {
+        files: ['*.ts', '*.tsx', '*.astro', '*.d.ts'],
+        parser: '@typescript-eslint/parser',
+        plugins: ['@typescript-eslint'],
+        extends: ['plugin:@typescript-eslint/recommended'],
+      },
     ],
   };
 }
@@ -509,7 +520,8 @@ module.exports = {
   },
 
   extends: eslintConfig.extends,
-  plugins: [...eslintConfig.plugins, '@typescript-eslint'],
+  // plugins: [...eslintConfig.plugins, '@typescript-eslint'],
+  plugins: [...eslintConfig.plugins],
 
   rules: {
     ...eslintConfig.rules,
@@ -539,16 +551,4 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off', // fvck off, we have properly configured `no-unused-vars`
     '@typescript-eslint/no-explicit-any': 'off',
   },
-  overrides: [
-    ...eslintConfig.overrides,
-    {
-      files: ['.eslintrc.cjs', 'eslint.config.cjs', '.prettierrc.cjs', '**/*.cjs', '*.*.cjs'],
-      rules: { '@typescript-eslint/no-var-requires': 'off' },
-    },
-    {
-      files: ['*.ts', '*.tsx', '*.astro', '*.d.ts'],
-      parser: '@typescript-eslint/parser',
-      extends: ['plugin:@typescript-eslint/recommended'],
-    },
-  ],
 };
