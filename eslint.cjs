@@ -408,7 +408,7 @@ function loadConfigFromWorkspace(ws) {
     },
     extends: [
       'eslint:recommended',
-      'plugin:@typescript-eslint/recommended',
+      // 'plugin:@typescript-eslint/recommended',
       'airbnb-base',
       'plugin:unicorn/recommended',
       'plugin:promise/recommended',
@@ -494,7 +494,7 @@ module.exports = {
   ...eslintConfig,
   ...eslintConfigPrettier,
 
-  parser: '@typescript-eslint/parser',
+  // parser: '@typescript-eslint/parser',
   globals: {
     ...eslintConfig.globals,
 
@@ -514,7 +514,6 @@ module.exports = {
   rules: {
     ...eslintConfig.rules,
     ...eslintConfigPrettier.rules,
-    '@typescript-eslint/no-var-requires': 'off',
 
     'unicorn/no-await-expression-member': 'off',
     'unicorn/consistent-destructuring ': 'off',
@@ -540,4 +539,16 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off', // fvck off, we have properly configured `no-unused-vars`
     '@typescript-eslint/no-explicit-any': 'off',
   },
+  overrides: [
+    ...eslintConfig.overrides,
+    {
+      files: ['.eslintrc.cjs', 'eslint.config.cjs', '.prettierrc.cjs', '**/*.cjs', '*.*.cjs'],
+      rules: { '@typescript-eslint/no-var-requires': 'off' },
+    },
+    {
+      files: ['*.ts', '*.tsx', '*.astro', '*.d.ts'],
+      parser: '@typescript-eslint/parser',
+      extends: ['plugin:@typescript-eslint/recommended'],
+    },
+  ],
 };
