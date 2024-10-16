@@ -494,6 +494,11 @@ function loadConfigFromWorkspace(ws) {
         parser: '@typescript-eslint/parser',
         plugins: ['@typescript-eslint'],
         extends: ['plugin:@typescript-eslint/recommended'],
+        rules: {
+          '@typescript-eslint/triple-slash-reference': 'off',
+          '@typescript-eslint/no-unused-vars': 'off', // fvck off, we have properly configured `no-unused-vars`
+          '@typescript-eslint/no-explicit-any': 'off',
+        },
       },
     ],
   };
@@ -547,8 +552,5 @@ module.exports = {
     'unicorn/no-useless-spread': 'off', // useless rule
     'unicorn/prefer-switch': 'off', // fvck off
     // 'no-explicit-any': 'warn',
-    '@typescript-eslint/triple-slash-reference': 'off',
-    '@typescript-eslint/no-unused-vars': 'off', // fvck off, we have properly configured `no-unused-vars`
-    '@typescript-eslint/no-explicit-any': 'off',
   },
 };
