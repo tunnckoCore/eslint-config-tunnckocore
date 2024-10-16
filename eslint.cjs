@@ -287,7 +287,7 @@ function loadConfigFromWorkspace(ws) {
       // 'node/no-missing-require': 'error',
 
       'node/no-unsupported-features/es-builtins': 'error',
-      'node/no-unsupported-features/node-builtins': 'error',
+      'node/no-unsupported-features/node-builtins': ['error', { version: '>=18.0.0' }],
 
       // buggy with `ecmaVersion: 'latest'`
       'node/no-unsupported-features/es-syntax': 'off',
@@ -352,7 +352,7 @@ function loadConfigFromWorkspace(ws) {
       // These below are intentional & explicit overrides of XO and Unicorn
 
       // ! needed for `unicorn/no-unreadable-array-destructuring`
-      'prefer-destructuring': ['warn', { object: true, array: false }],
+      // 'prefer-destructuring': ['warn', { object: true, array: false }],
       'unicorn/no-unreadable-array-destructuring': 'error', // default in recommended
 
       'unicorn/no-unused-properties': 'error',
@@ -516,7 +516,6 @@ module.exports = {
     ...eslintConfigPrettier.rules,
     '@typescript-eslint/no-var-requires': 'off',
 
-    'node/no-unsupported-features/node-builtins': ['error', { version: '>=18.0.0' }],
     'unicorn/no-await-expression-member': 'off',
     'unicorn/consistent-destructuring ': 'off',
     'sort-keys': 'off',
@@ -540,6 +539,5 @@ module.exports = {
     '@typescript-eslint/triple-slash-reference': 'off',
     '@typescript-eslint/no-unused-vars': 'off', // fvck off, we have properly configured `no-unused-vars`
     '@typescript-eslint/no-explicit-any': 'off',
-    'unicorn/catch-error-name': ['warn', { name: 'err' }],
   },
 };
