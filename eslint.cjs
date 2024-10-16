@@ -9,7 +9,7 @@ const path = require('node:path');
 const process = require('node:process');
 const airbnbBase = require('eslint-config-airbnb-base');
 const eslintConfigPrettier = require('eslint-config-prettier');
-const prettierConfig = require('./prettier.cjs');
+const prettierConfig = require('./.prettierrc.cjs');
 
 // eslint-disable-next-line import/no-dynamic-require
 const bestPractices = require(airbnbBase.extends[0]);
@@ -40,39 +40,35 @@ function getEsLintConfig(options = {}) {
 // module.exports = { readJSON, getESLintConfig, loadConfigFromWorkspace };
 
 function loadConfigFromWorkspace(ws) {
-  const extensions = ['.js', '.mjs', '.cjs', '.jsx', '.md', '.mdx', '.ts', '.tsx'];
+  const extensions = ['.js', '.mjs', '.cjs', '.jsx', '.md', '.mdx', '.ts', '.tsx', '.astro'];
 
-  let settingsAndImportResolver = false;
-
-  if (ws) {
-    settingsAndImportResolver = {
+  const settingsAndImportResolver = {
+    node: {
+      ...(ws ? { allowModules: ws.packages } : {}),
+      tryExtensions: extensions,
+    },
+    'import/resolver': {
       node: {
-        allowModules: ws.packages,
+        // TODO: do we even need this?
+        // paths: ws.workspaces.map((x) => x.slice(0, -2)),
+        extensions,
         tryExtensions: extensions,
-      },
-      'import/resolver': {
-        node: {
-          // TODO: do we even need this?
-          // paths: ws.workspaces.map((x) => x.slice(0, -2)),
-          extensions,
-          tryExtensions: extensions,
 
-          // TODO: should we?
-          // - what's the difference with `paths`?
-          // - shoud it be each package from every workspace?
-          // - or if it's like node_modules, then just list the workspaces dirs?
-          moduleDirectory: ['node_modules', ...ws.workspaces.map((x) => x.slice(0, -2))],
-        },
-
-        // eslint-plugin-import / eslint-import-resolver-alias
-        alias: {
-          // mapping of [packageName, packageLocation]
-          map: Object.values(ws.graph).map((item) => [item.name, item.resolved]),
-          extensions,
-        },
+        // TODO: should we?
+        // - what's the difference with `paths`?
+        // - shoud it be each package from every workspace?
+        // - or if it's like node_modules, then just list the workspaces dirs?
+        moduleDirectory: ['node_modules', ...(ws ? ws.workspaces.map((x) => x.slice(0, -2)) : [])],
       },
-    };
-  }
+
+      // eslint-plugin-import / eslint-import-resolver-alias
+      alias: {
+        // mapping of [packageName, packageLocation]
+        ...(ws ? { map: Object.values(ws.graph).map((item) => [item.name, item.resolved]) } : {}),
+        extensions,
+      },
+    },
+  };
 
   const ignoredProps = [
     ...bestPractices.rules['no-param-reassign'][1].ignorePropertyModificationsFor,
@@ -109,8 +105,8 @@ function loadConfigFromWorkspace(ws) {
     // https://eslint.org/docs/rules/default-param-last
     'default-param-last': 'error',
 
-    'prefer-regex-literals': 'off',
-    'no-empty': ['error', { allowEmptyCatch: false }],
+    'prefer-regex-literals': 'error',
+    'no-empty': ['error', { allowEmptyCatch: true }],
     'no-extend-native': 'error',
     'no-use-extend-native/no-use-extend-native': 'error',
 
@@ -135,9 +131,9 @@ function loadConfigFromWorkspace(ws) {
     'arrow-parens': ['error', 'always', { requireForBlockBody: true }],
     'prefer-arrow-callback': ['error', { allowNamedFunctions: true, allowUnboundThis: true }],
     // http://eslint.org/docs/rules/max-params
-    'max-params': ['error', { max: 3 }],
+    'max-params': ['error', { max: 4 }],
     // http://eslint.org/docs/rules/max-statements
-    'max-statements': ['error', { max: 40 }],
+    'max-statements': ['error', 40, { ignoreTopLevelFunctions: true }],
     // http://eslint.org/docs/rules/max-statements-per-line
     'max-statements-per-line': ['error', { max: 1 }],
     // http://eslint.org/docs/rules/max-nested-callbacks
@@ -159,6 +155,7 @@ function loadConfigFromWorkspace(ws) {
         functions: false,
         classes: true,
         variables: true,
+        allowNamedExports: true,
       },
     ],
 
@@ -168,6 +165,7 @@ function loadConfigFromWorkspace(ws) {
       {
         ignoreRestSiblings: true, // airbnb's default
         vars: 'all', // airbnb's default
+        // caughtErrorsIgnorePattern: '^(?:$$|xx|_|__|[iI]gnor(?:e|ing|ed))',
         varsIgnorePattern: '^(?:$$|xx|_|__|[iI]gnor(?:e|ing|ed))',
         args: 'after-used', // airbnb's default
         argsIgnorePattern: '^(?:$$|xx|_|__|[iI]gnor(?:e|ing|ed))',
@@ -242,10 +240,12 @@ function loadConfigFromWorkspace(ws) {
       // ],
 
       'import/order': 'error',
-      'import/no-unassigned-import': [
-        'error',
-        { allow: ['dotenv/config', 'dotenv/import', '@babel/polyfill', '@babel/register'] },
-      ],
+      // 'import/no-unassigned-import': [
+      //   'error',
+      //   {
+      //     allow: ['dotenv/config', 'dotenv/import', '@babel/polyfill', '@babel/register', '*.css'],
+      //   },
+      // ],
 
       // TODO: mm?
       'import/prefer-default-export': 'off',
@@ -412,10 +412,14 @@ function loadConfigFromWorkspace(ws) {
       'airbnb-base',
       'plugin:unicorn/recommended',
       'plugin:promise/recommended',
+      'plugin:import/errors',
+      'plugin:import/warnings',
+      'plugin:import/typescript',
+      'plugin:astro/recommended',
       // broken in 2024, eventho we installed the same exact pinned versions.. wtf
       // 'plugin:prettier/recommended',
     ],
-    plugins: ['no-use-extend-native', 'node', 'promise', 'unicorn', 'prettier'],
+    plugins: ['no-use-extend-native', 'node', 'promise', 'unicorn', 'prettier', 'astro'],
     reportUnusedDisableDirectives: true,
     rules: {
       ...additionalChanges,
@@ -426,6 +430,61 @@ function loadConfigFromWorkspace(ws) {
 
       'prettier/prettier': ['error', prettierConfig, { usePrettierrc: false }],
     },
+    overrides: [
+      {
+        // Define the configuration for `.astro` file.
+        files: ['*.astro'],
+        processor: 'astro/client-side-ts',
+        // Allows Astro components to be parsed.
+        parser: 'astro-eslint-parser',
+        // Parse the script in `.astro` as TypeScript by adding the following configuration.
+        // It's the setting you need when using TypeScript.
+        parserOptions: {
+          parser: '@typescript-eslint/parser',
+          extraFileExtensions: ['.astro'],
+        },
+        rules: {
+          // !NOTE: disabling this on ESLint is still okay,
+          // !NOTE: because the Prettier uses its own config and prettier-plugin-astro to format everything correctly
+          // !NOTE: formatting typescript also works on script tags and the astro frontmatter
+          // If you are using "prettier/prettier" rule,
+          // you don't need to format inside <script> as it will be formatted as a `.astro` file.
+          'prettier/prettier': 'off',
+
+          // !NOTE: seems like `ignoreTopLevelFunctions` is not working for .astro files
+          'max-statements': ['warn', 40, { ignoreTopLevelFunctions: true }],
+        },
+      },
+      {
+        // Define the configuration for `<script>` tag.
+        // Script in `<script>` is assigned a virtual file name with the `.js` extension.
+        files: ['**/*.astro/*.js', '*.astro/*.js'],
+        rules: {
+          // If you are using "prettier/prettier" rule,
+          // you don't need to format inside <script> as it will be formatted as a `.astro` file.
+          'prettier/prettier': 'off',
+          // !NOTE: seems like `ignoreTopLevelFunctions` is not working for .astro files
+          'max-statements': ['warn', 40, { ignoreTopLevelFunctions: true }],
+        },
+      },
+      {
+        // Define the configuration for `<script>` tag when using `client-side-ts` processor.
+        // Script in `<script>` is assigned a virtual file name with the `.ts` extension.
+        files: ['**/*.astro/*.ts', '*.astro/*.ts'],
+        parser: '@typescript-eslint/parser',
+        parserOptions: {
+          sourceType: 'module',
+          project: null,
+        },
+        rules: {
+          // If you are using "prettier/prettier" rule,
+          // you don't need to format inside <script> as it will be formatted as a `.astro` file.
+          'prettier/prettier': 'off',
+          // !NOTE: seems like `ignoreTopLevelFunctions` is not working for .astro files
+          'max-statements': ['warn', 40, { ignoreTopLevelFunctions: true }],
+        },
+      },
+    ],
   };
 }
 
@@ -455,8 +514,7 @@ module.exports = {
   rules: {
     ...eslintConfig.rules,
     ...eslintConfigPrettier.rules,
-    '@typescript-eslint/no-unused-vars': 'warn',
-    'no-unused-vars': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
 
     'node/no-unsupported-features/node-builtins': ['error', { version: '>=18.0.0' }],
     'unicorn/no-await-expression-member': 'off',
@@ -464,13 +522,24 @@ module.exports = {
     'sort-keys': 'off',
 
     camelcase: 'off',
-    'max-statements': ['off', 40, { ignoreTopLevelFunctions: true }],
     'node/prefer-global/process': 'off',
     'node/file-extension-in-import': 'off',
     'unicorn/expiring-todo-comments': 'off',
-    'import/no-unresolved': 'off',
     'import/no-unassigned-import': 'off',
     'import/prefer-default-export': 'off',
     'import/no-relative-packages': 'off',
+
+    // bruh
+    'prefer-destructuring': 'off',
+    'no-param-reassign': 'off',
+
+    'import/no-unresolved': ['error', { ignore: ['^astro:*'] }],
+    'unicorn/no-useless-spread': 'off', // useless rule
+    'unicorn/prefer-switch': 'off', // fvck off
+    // 'no-explicit-any': 'warn',
+    '@typescript-eslint/triple-slash-reference': 'off',
+    '@typescript-eslint/no-unused-vars': 'off', // fvck off, we have properly configured `no-unused-vars`
+    '@typescript-eslint/no-explicit-any': 'off',
+    'unicorn/catch-error-name': ['warn', { name: 'err' }],
   },
 };

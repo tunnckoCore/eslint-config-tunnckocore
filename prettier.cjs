@@ -1,107 +1,102 @@
-/** @typedef  {import("prettier").Config} PrettierConfig */
-
 const sortImportsPlugin = {
-  plugins: ["@ianvs/prettier-plugin-sort-imports"],
   importOrder: [
-    "<BUILTIN_MODULES>",
-    "^(react/(.*)$)|^(react$)",
-    "^(next/(.*)$)|^(next$)",
-    "<THIRD_PARTY_MODULES>",
-    "",
-    "^~/(.*)$",
-    "^@/(.*)$",
-    "^~(.*)$",
-    "^[./]",
+    '<BUILTIN_MODULES>',
+    '^(react/(.*)$)|^(react$)',
+    '^(next/(.*)$)|^(next$)',
+    '<THIRD_PARTY_MODULES>',
+    '',
+    '^~/(.*)$',
+    '^@/(.*)$',
+    '^~(.*)$',
+    '^[./]',
   ],
 };
 
 /** @type { PrettierConfig | SortImportsConfig } */
 const config = {
-  endOfLine: "lf",
+  endOfLine: 'lf',
   printWidth: 100,
   tabWidth: 2,
   useTabs: false,
   semi: true,
-  proseWrap: "always",
-  arrowParens: "always",
+  proseWrap: 'always',
+  arrowParens: 'always',
   singleQuote: true,
-  trailingComma: "all",
+  trailingComma: 'all',
   bracketSpacing: true,
   bracketSameLine: false,
-  plugins: ["prettier-plugin-tailwindcss"],
-  // Last version that doesn't squash type and value imports
+
+  // !NOTE: do not use root level `plugins`, put it on overrides
 
   overrides: [
     {
-      files: ["**/.all-contributorsrc"],
-      options: {
-        parser: "json",
-      },
+      files: ['**/.all-contributorsrc'],
+      options: { parser: 'json' },
     },
     {
-      files: ["**/*.json"],
-      options: {
-        parser: "json-stringify",
-      },
+      files: ['**/.vscode/settings.json'],
+      options: { parser: 'jsonc' },
     },
+    // {
+    //   files: ["**/*.json"],
+    //   options: {
+    //     parser: "json-stringify",
+    //   },
+    // },
     {
-      files: ["**/*.{mjs,js,jsx}"],
+      files: ['**/*.{mjs,js,jsx}'],
       options: {
         ...sortImportsPlugin,
+        // !NOTE: tailwind plugin must be last
+        plugins: ['@ianvs/prettier-plugin-sort-imports', 'prettier-plugin-tailwindcss'],
       },
     },
     {
-      files: ["**/*.{ts,tsx}"],
+      files: ['**/*.{ts,tsx}'],
       options: {
         ...sortImportsPlugin,
-        parser: "typescript",
+        parser: 'typescript',
+        // !NOTE: tailwind plugin must be last
+        plugins: ['@ianvs/prettier-plugin-sort-imports', 'prettier-plugin-tailwindcss'],
       },
     },
     {
-      files: ["**/tsconfig*.json"],
+      files: ['**/tsconfig*.json'],
+      options: { parser: 'jsonc' },
+    },
+    {
+      files: ['**/package.json'],
       options: {
-        parser: "jsonc",
+        parser: 'json-stringify',
+        plugins: ['prettier-plugin-pkgjson'],
       },
     },
     {
-      files: ["**/package.json"],
+      files: ['**/*.md'],
       options: {
-        parser: "json-stringify",
-        plugins: ["prettier-plugin-pkgjson"],
+        parser: 'markdown',
+        proseWrap: 'always',
       },
     },
     {
-      files: ["**/*.md"],
+      files: ['**/*.mdx'],
       options: {
-        parser: "markdown",
-        proseWrap: "always",
+        parser: 'mdx',
+        proseWrap: 'always',
       },
     },
     {
-      files: ["**/*.mdx"],
+      files: ['**/*.astro'],
       options: {
-        parser: "mdx",
-        proseWrap: "always",
+        parser: 'astro',
+        // !NOTE: tailwind plugin must be last
+        plugins: ['prettier-plugin-astro', 'prettier-plugin-tailwindcss'],
       },
     },
     {
-      files: ["**/*.astro"],
+      files: '**/*.sol',
       options: {
-        parser: "astro",
-        plugins: ["prettier-plugin-astro"],
-      },
-    },
-  ],
-};
-
-const withSolidity = {
-  ...config,
-  overrides: [
-    ...config.overrides,
-    {
-      files: "**/*.sol",
-      options: {
-        parser: "solidity-parse",
+        parser: 'solidity-parse',
         printWidth: 100,
         tabWidth: 4,
         useTabs: false,
@@ -112,4 +107,4 @@ const withSolidity = {
   ],
 };
 
-module.exports = withSolidity;
+module.exports = config;
