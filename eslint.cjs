@@ -433,7 +433,7 @@ function loadConfigFromWorkspace(ws) {
     overrides: [
       {
         // Define the configuration for `.astro` file.
-        files: ['*.astro'],
+        files: ['**/*.astro'],
         processor: 'astro/client-side-ts',
         // Allows Astro components to be parsed.
         parser: 'astro-eslint-parser',
@@ -443,7 +443,13 @@ function loadConfigFromWorkspace(ws) {
           parser: '@typescript-eslint/parser',
           extraFileExtensions: ['.astro'],
         },
+        plugins: ['@typescript-eslint'],
+        extends: ['plugin:@typescript-eslint/recommended'],
         rules: {
+          '@typescript-eslint/triple-slash-reference': 'off',
+          '@typescript-eslint/no-unused-vars': 'off', // fvck off, we have properly configured `no-unused-vars`
+          '@typescript-eslint/no-explicit-any': 'off',
+
           // !NOTE: disabling this on ESLint is still okay,
           // !NOTE: because the Prettier uses its own config and prettier-plugin-astro to format everything correctly
           // !NOTE: formatting typescript also works on script tags and the astro frontmatter
@@ -490,7 +496,7 @@ function loadConfigFromWorkspace(ws) {
         // rules: { '@typescript-eslint/no-var-requires': 'off' },
       },
       {
-        files: ['*.ts', '*.tsx', '*.astro', '*.d.ts'],
+        files: ['**/*.ts', '**/*.tsx', '**/*.d.ts'],
         parser: '@typescript-eslint/parser',
         plugins: ['@typescript-eslint'],
         extends: ['plugin:@typescript-eslint/recommended'],
