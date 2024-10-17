@@ -554,7 +554,7 @@ module.exports = {
     'prefer-destructuring': 'off',
     'no-param-reassign': 'off',
 
-    'import/no-unresolved': ['error', { ignore: ['^astro:*'] }],
+    'import/no-unresolved': ['error', { ignore: ['^astro:*', '^bun:*', '^npm:*', '^jsr:*'] }],
     'unicorn/no-useless-spread': 'off', // useless rule
     'unicorn/prefer-switch': 'off', // fvck off
     // 'no-explicit-any': 'warn',
