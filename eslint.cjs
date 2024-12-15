@@ -286,7 +286,7 @@ function loadConfigFromWorkspace(ws) {
       // 'node/no-missing-import': 'error',
       // 'node/no-missing-require': 'error',
 
-      'node/no-unsupported-features/es-builtins': 'error',
+      'node/no-unsupported-features/es-builtins': ['error', { version: '>=18.0.0' }],
       'node/no-unsupported-features/node-builtins': ['error', { version: '>=18.0.0' }],
 
       // buggy with `ecmaVersion: 'latest'`
